@@ -5,6 +5,8 @@
   "homepage": "https://minahil-hassan.github.io/crypto-dashboard",
   "dependencies": {
     "cra-template-pwa": "2.0.0",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
     "lucide-react": "^0.539.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

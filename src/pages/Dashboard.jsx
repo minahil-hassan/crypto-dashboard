@@ -1,60 +1,33 @@
+//src/pages/Dashboard.jsx
+import LinePriceChart from '../components/Charts/LinePriceChart';
+import useCoinGecko from '../hooks/useCoinGecko';
+import PriceMetricCard from '../components/Cards/PriceMetricCard';
+
 export default function Dashboard() {
+  const { data: coins, loading, error } = useCoinGecko(
+    '/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano&sparkline=true&price_change_percentage=24h'
+  );
+
   return (
     <>
-      {/* Top 4 metric cards row (placeholder for now) */}
+      {/* Top 4 metric cards */}
       <section className="grid-cards">
-        <div className="glass-card metric">
-          <div className="icon">₿</div>
-          <div>
-            <div className="title">Bitcoin</div>
-            <div className="sub">$--</div>
-          </div>
-          <div className="delta text-pos">+--%</div>
-        </div>
-
-        <div className="glass-card metric">
-          <div className="icon">Ξ</div>
-          <div>
-            <div className="title">Ethereum</div>
-            <div className="sub">$--</div>
-          </div>
-          <div className="delta text-neg">--%</div>
-        </div>
-
-        <div className="glass-card metric">
-          <div className="icon">◎</div>
-          <div>
-            <div className="title">Solana</div>
-            <div className="sub">$--</div>
-          </div>
-          <div className="delta text-pos">+--%</div>
-        </div>
-
-        <div className="glass-card metric">
-          <div className="icon">A</div>
-          <div>
-            <div className="title">Cardano</div>
-            <div className="sub">$--</div>
-          </div>
-          <div className="delta text-neg">--%</div>
-        </div>
+        {loading || !coins
+          ? Array(4)
+              .fill(0)
+              .map((_, i) => (
+                <div key={i} className="glass-card metric skeleton" style={{ height: 80 }} />
+              ))
+          : coins.map((coin) => (
+              <PriceMetricCard key={coin.id} coin={coin} />
+            ))}
       </section>
 
       {/* Middle row: main chart (left) + widget (right) */}
       <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+        
         <div className="chart-glass">
-          <div className="chart-header">
-            <h3 style={{ margin: 0 }}>Price</h3>
-            <div className="range-toggle">
-              <button className="range-chip is-active">90d</button>
-              <button className="range-chip">30d</button>
-              <button className="range-chip">7d</button>
-              <button className="range-chip">24h</button>
-            </div>
-          </div>
-          <div className="chart-body">
-            <div className="chart-panel skeleton" />
-          </div>
+          <LinePriceChart coinId="bitcoin" />
         </div>
 
         <div className="glass-panel">
