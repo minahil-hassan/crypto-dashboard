@@ -1,16 +1,25 @@
-//src/pages/Dashboard.jsx
-import LinePriceChart from '../components/Charts/LinePriceChart';
+import { useState } from 'react';
 import useCoinGecko from '../hooks/useCoinGecko';
 import PriceMetricCard from '../components/Cards/PriceMetricCard';
+import LinePriceChart from '../components/Charts/LinePriceChart';
 
 export default function Dashboard() {
-  const { data: coins, loading, error } = useCoinGecko(
+  const { data: coins, loading } = useCoinGecko(
     '/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano&sparkline=true&price_change_percentage=24h'
   );
 
+  const [selectedCoinId, setSelectedCoinId] = useState(null);
+  const [range, setRange] = useState('90'); // lifted range state
+
+  const handleToggle = (coinId) => {
+    setSelectedCoinId((prev) => (prev === coinId ? null : coinId));
+  };
+
+  const activeCoin = selectedCoinId || 'bitcoin';
+
   return (
     <>
-      {/* Top 4 metric cards */}
+      {/* Top metric cards */}
       <section className="grid-cards">
         {loading || !coins
           ? Array(4)
@@ -19,15 +28,19 @@ export default function Dashboard() {
                 <div key={i} className="glass-card metric skeleton" style={{ height: 80 }} />
               ))
           : coins.map((coin) => (
-              <PriceMetricCard key={coin.id} coin={coin} />
+              <PriceMetricCard
+                key={coin.id}
+                coin={coin}
+                isSelected={selectedCoinId === coin.id}
+                onClick={() => handleToggle(coin.id)}
+              />
             ))}
       </section>
 
       {/* Middle row: main chart (left) + widget (right) */}
       <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
-        
         <div className="chart-glass">
-          <LinePriceChart coinId="bitcoin" />
+          <LinePriceChart coinId={activeCoin} range={range} setRange={setRange} />
         </div>
 
         <div className="glass-panel">

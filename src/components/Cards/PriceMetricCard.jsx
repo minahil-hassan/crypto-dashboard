@@ -1,10 +1,14 @@
 // src/components/Cards/PriceMetricCard.jsx
-export default function PriceMetricCard({ coin }) {
+export default function PriceMetricCard({ coin, onClick, isSelected }) {
   const isUp = coin.price_change_percentage_24h >= 0;
   const deltaClass = isUp ? 'text-pos' : 'text-neg';
 
   return (
-    <div className="glass-card metric">
+    <div
+      className={`glass-card metric ${isSelected ? 'neon-glow' : ''}`}
+      onClick={onClick}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="icon">
         <img
           src={coin.image}
